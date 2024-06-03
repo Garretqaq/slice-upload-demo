@@ -1,0 +1,12 @@
+#开发环境
+breakpoint:
+  upload:
+    dir: D:/data0/uploads/
+    #1024*1024=1 048 576,5M=5 242 880
+    chunkSize: 5 242 880
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
