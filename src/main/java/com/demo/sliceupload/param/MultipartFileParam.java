@@ -18,6 +18,8 @@ public class MultipartFileParam {
     //当前为第几块分片
     private int chunk;
     //当前分片大小
+    private long chunkSize = 0L;
+    // 总文件大小
     private long size = 0L;
     //文件名
     private String name;
@@ -58,6 +60,14 @@ public class MultipartFileParam {
         this.chunk = chunk;
     }
 
+    public long getChunkSize() {
+        return chunkSize;
+    }
+
+    public void setChunkSize(long chunkSize) {
+        this.chunkSize = chunkSize;
+    }
+
     public long getSize() {
         return size;
     }
@@ -88,19 +98,5 @@ public class MultipartFileParam {
 
     public void setMd5(String md5) {
         this.md5 = md5;
-    }
-
-    @Override
-    public String toString() {
-        return "MultipartFileParam{" +
-                "uid='" + uid + '\'' +
-                ", id='" + id + '\'' +
-                ", chunks=" + chunks +
-                ", chunk=" + chunk +
-                ", size=" + size +
-                ", name='" + name + '\'' +
-                ", file=" + file +
-                ", md5='" + md5 + '\'' +
-                '}';
     }
 }
