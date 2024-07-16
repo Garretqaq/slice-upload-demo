@@ -174,14 +174,14 @@
         // 避免重复创建
         if (!$percent.length) {
             $percent = $('<div id="' + id_Prefix + '-progress" class="progress progress-striped active">' +
-                    '<div id="' + id_Prefix + '-progress-bar" class="progress-bar" role="progressbar" style="width: 0%">' +
-                    '</div>' +
-                    '</div>'
+                '<div id="' + id_Prefix + '-progress-bar" class="progress-bar" role="progressbar" style="width: 0%">' +
+                '</div>' +
+                '</div>'
             ).appendTo($li).find('#' + id_Prefix + '-progress-bar');
         }
         var progressPercentage = percentage * 100 + '%';
         $percent.css('width', progressPercentage);
-        $percent.html(titleName + ':' + progressPercentage);
+        $percent.html(titleName + ':' + parseFloat(progressPercentage).toFixed(2));
     }
 
     /**
