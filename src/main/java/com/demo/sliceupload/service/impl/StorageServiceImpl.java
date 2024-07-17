@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.FileAlreadyExistsException;
@@ -169,7 +166,10 @@ public class StorageServiceImpl implements StorageService {
         try (BufferedOutputStream outputStream = FileUtil.getOutputStream(mergeFile)) {
             for (String path : pathList) {
                 File file = new File(path);
-                IoUtil.copy(FileUtil.getInputStream(file), outputStream);
+                BufferedInputStream inputStream = FileUtil.getInputStream(file);
+                IoUtil.copy(inputStream, outputStream);
+                // 拷贝完关闭输入流
+                inputStream.close();
             }
         }
     }
