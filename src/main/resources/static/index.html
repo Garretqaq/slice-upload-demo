@@ -152,8 +152,13 @@
     });
     uploader.on('uploadComplete', function (file) {
         // 隐藏进度条
-        // fadeOutProgress(file, 'MD5');
-        // fadeOutProgress(file, 'FILE');
+        fadeOutProgress(file, 'MD5');
+        fadeOutProgress(file, 'FILE');
+        $('#picker').fadeOut()
+
+
+        // 请求合并接口
+        let completeUrl ='/index/merge?md5=' + file.md5 + "&fileName=" + file.name
     });
     // 文件上传
     $btn.on('click', function () {

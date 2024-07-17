@@ -1,6 +1,9 @@
 package com.demo.sliceupload.service.impl;
 
 import cn.hutool.cache.Cache;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.util.StrUtil;
 import com.demo.sliceupload.param.MultipartFileParam;
 import com.demo.sliceupload.service.StorageService;
 import com.demo.sliceupload.utils.Constants;
@@ -13,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -22,6 +26,8 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by 超文 on 2017/5/2.
@@ -124,6 +130,57 @@ public class StorageServiceImpl implements StorageService {
         }
     }
 
+    @Override
+    public void tempStorageByMd5(MultipartFileParam fileParam) throws IOException {
+        String md5Dir = getMd5Dir(fileParam.getMd5());
+
+        // 新建文件名
+        String tmpFileName = fileParam.getChunk()  + ".tmp";
+        File tmpFile = new File(md5Dir + File.separator + tmpFileName);
+        if (tmpFile.exists()){
+            return;
+        }
+
+        try (BufferedOutputStream outputStream = FileUtil.getOutputStream(tmpFile)) {
+            IoUtil.copy(fileParam.getFile().getInputStream(), outputStream);
+        }
+    }
+
+    @Override
+    public void merge(String md5, String fileName) throws IOException {
+        String md5Dir = getMd5Dir(md5);
+        if (!FileUtil.exist(md5Dir)){
+            return;
+        }
+
+        // 获取md5下面的所有文件
+        List<String> pathList = FileUtil.listFileNames(md5Dir)
+                .stream()
+                .sorted((o1, o2) -> {
+                    Integer num1 = Integer.parseInt(StrUtil.removeSuffix(o1, ".tmp"));
+                    Integer num2 = Integer.parseInt(StrUtil.removeSuffix(o2, ".tmp"));
+                    return num1.compareTo(num2);
+                })
+                .map(f -> md5Dir + File.separator + f)
+                .collect(Collectors.toList());
+
+        // 合并文件
+        File mergeFile = new File(md5Dir + File.separator + fileName);
+        try (BufferedOutputStream outputStream = FileUtil.getOutputStream(mergeFile)) {
+            for (String path : pathList) {
+                File file = new File(path);
+                IoUtil.copy(FileUtil.getInputStream(file), outputStream);
+            }
+        }
+    }
+
+    private String getMd5Dir(String md5) {
+        File tmpDir = FileUtil.mkdir("/data/tmp");
+
+        String md5Dir = tmpDir.getPath() + File.separator + md5;
+        File file = FileUtil.mkdir(md5Dir);
+        return file.getPath();
+    }
     /**
      * 检查并修改文件上传进度
      *

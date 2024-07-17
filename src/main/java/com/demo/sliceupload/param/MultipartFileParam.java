@@ -17,10 +17,10 @@ public class MultipartFileParam {
     private int chunks;
     //当前为第几块分片
     private int chunk;
-    //当前分片大小
-    private long chunkSize = 0L;
-    // 总文件大小
+    //总大小
     private long size = 0L;
+    // 当前分片大小
+    private long chunkSize = 0L;
     //文件名
     private String name;
     //分片对象

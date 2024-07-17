@@ -38,4 +38,17 @@ public interface StorageService {
      */
     void uploadFileByMappedByteBuffer(MultipartFileParam param) throws IOException;
 
+    /**
+     * 根据md5存储临时文件
+     * @param fileParam 文件参数
+     */
+    void tempStorageByMd5(MultipartFileParam fileParam) throws IOException;
+
+    /**
+     * 根据md5合并
+     *
+     * @param md5      md5
+     * @param fileName 文件名称
+     */
+    void merge(String md5, String fileName) throws IOException;
 }

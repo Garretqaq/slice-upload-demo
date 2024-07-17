@@ -13,9 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
@@ -86,7 +85,9 @@ public class IndexController {
                 // 方法1
                 //storageService.uploadFileRandomAccessFile(param);
                 // 方法2 这个更快点
-                storageService.uploadFileByMappedByteBuffer(param);
+//                storageService.uploadFileByMappedByteBuffer(param);
+                // 方法3
+                storageService.tempStorageByMd5(param);
             } catch (IOException e) {
                 e.printStackTrace();
                 logger.error("文件上传失败。{}", param.toString());
@@ -96,5 +97,20 @@ public class IndexController {
         return ResponseEntity.ok().body("上传成功。");
     }
 
+
+
+    /**
+     * ftp合并上传
+     */
+    @GetMapping("merge")
+    @ResponseBody
+    public ResponseEntity merge(@RequestParam String md5, String fileName) {
+        try {
+            storageService.merge(md5, fileName);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return ResponseEntity.ok().body("合并成功。");
+    }
 
 }
